@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y8 — Data Representation: Images, Sound & Compression</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{--bg:#0f1117;--surface:#1a1d2e;--surface2:#22263a;--border:#353a5c;--accent:#00f0ff;--text:#f0f0ff;--muted:#9090c0;--success:#2ecc71;--warning:#f1c40f;--danger:#e74c3c;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;}
+.presentation{display:flex;flex-direction:column;height:100vh;}
+.progress-bar{height:3px;background:var(--border);flex-shrink:0;}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.5s ease;}
+.slide-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;}
+.slide{width:100%;max-width:920px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 56px;position:relative;overflow-y:auto;max-height:calc(100vh - 130px);animation:sIn 0.3s ease;}
+@keyframes sIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+.slide::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent);}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.stype{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:3px 10px;border-radius:5px;display:inline-block;}
+.t-intro{background:rgba(0,240,255,.12);color:#00f0ff;border:1px solid rgba(0,240,255,.3);}
+.t-concept{background:rgba(191,95,255,.12);color:#bf5fff;border:1px solid rgba(191,95,255,.3);}
+.t-activity{background:rgba(255,122,32,.12);color:#ff7a20;border:1px solid rgba(255,122,32,.3);}
+.t-summary{background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3);}
+.t-compete,.t-Competition{background:rgba(241,196,15,.12);color:#f1c40f;border:1px solid rgba(241,196,15,.3);}
+.snum{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.slide h1{font-size:clamp(20px,3.5vw,34px);font-weight:700;line-height:1.15;margin-bottom:18px;}
+.sb{color:var(--muted);font-size:15px;line-height:1.8;}
+.sb ul,.sb ol{padding-left:22px;}
+.sb li{margin-bottom:7px;}
+.sb li::marker{color:var(--accent);}
+.sb strong{color:var(--text);}
+.sb p{margin-bottom:12px;}
+.sb p:last-child{margin-bottom:0;}
+code{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:5px;font-size:13px;color:var(--accent);}
+pre{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:14px 18px;border-radius:10px;font-size:13px;color:var(--accent);overflow-x:auto;margin:12px 0;line-height:1.7;}
+.callout{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--text);}
+.callout.warn{border-left-color:var(--warning);background:rgba(241,196,15,.08);}
+.callout.success{border-left-color:var(--success);background:rgba(46,204,113,.08);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0;}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;}
+.bit-table{width:100%;border-collapse:collapse;margin:14px 0;}
+.bit-table th{background:var(--surface2);padding:10px 14px;border:1px solid var(--border);text-align:center;font-size:13px;color:var(--accent);}
+.bit-table td{padding:10px 14px;border:1px solid var(--border);font-size:13px;}
+.bit-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.task-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0;}
+.task-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text);}
+.answer-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.answer-row label{font-size:13px;color:var(--muted);min-width:260px;flex:1 1 260px;line-height:1.5;}
+.ans-input{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:14px;width:clamp(140px,30vw,320px);text-align:left;transition:border-color .2s;}
+.ans-input:focus{outline:none;border-color:var(--accent);}
+.check-btn{padding:6px 14px;border-radius:7px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.check-btn:hover{background:var(--accent);color:#000;}
+.fb{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;display:none;}
+.fb.ok{background:rgba(46,204,113,.15);color:var(--success);border:1px solid var(--success);display:inline-block;}
+.fb.no{background:rgba(231,76,60,.15);color:var(--danger);border:1px solid var(--danger);display:inline-block;}
+.compete-board{background:var(--surface2);border:2px solid var(--warning);border-radius:14px;padding:20px;margin:14px 0;}
+.score-display{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--warning);text-align:center;margin:10px 0;}
+.timer-bar{height:8px;background:var(--border);border-radius:4px;margin:8px 0;overflow:hidden;}
+.timer-fill{height:100%;background:var(--warning);border-radius:4px;transition:width 1s linear;}
+.compete-input{background:var(--bg);border:2px solid var(--warning);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--mono);font-size:18px;width:100%;text-align:center;margin:10px 0;}
+.compete-input:focus{outline:none;}
+.compete-btn{padding:10px 28px;border-radius:8px;border:none;background:var(--warning);color:#000;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--sans);width:100%;margin-top:6px;}
+.compete-q{font-size:17px;font-weight:700;text-align:center;padding:14px;color:var(--text);min-height:52px;}
+.leaderboard{list-style:none;margin-top:10px;}
+.leaderboard li{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;font-size:13px;margin-bottom:4px;background:rgba(241,196,15,.06);border:1px solid rgba(241,196,15,.15);}
+.lb-pos{font-family:var(--mono);font-size:12px;color:var(--warning);width:24px;}
+.lb-name{flex:1;font-weight:600;}
+.lb-score{font-family:var(--mono);font-size:13px;color:var(--warning);}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);}
+.nav-btn{padding:8px 22px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);transition:all .2s;font-family:var(--sans);}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.nav-btn.primary{background:var(--accent);color:#000;border-color:var(--accent);}
+.nav-center{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.dot-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:300px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.pdot.active{background:var(--accent);transform:scale(1.4);}
+.pdot.done{background:var(--muted);}
+.pdot.compete-dot{background:rgba(241,196,15,.4);}
+.pdot.compete-dot.active{background:var(--warning);}
+.sctr{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.kbhint{font-size:11px;color:var(--muted);}
+.pixel-grid{display:inline-grid;gap:2px;margin:10px 0;}
+.px{width:28px;height:28px;border-radius:3px;border:1px solid rgba(255,255,255,.08);}
+body.nature-green{--bg:#f4f1e8;--surface:#fff;--surface2:#ebe6d5;--border:#a8956a;--accent:#3a7a3a;--text:#1c1a0e;--muted:#5c5430;}
+body.superpower *{font-family:'OpenDyslexic','Comic Sans MS',cursive!important;letter-spacing:.06em;word-spacing:.18em;line-height:1.9!important;}
+body.superpower{--bg:#fffbea;--surface:#fff;--surface2:#f5f0dc;--border:#c8b97a;--text:#1a1200;--muted:#5a4e20;--accent:#1a6fd4;}
+@media(max-width:640px){.slide{padding:24px 18px;}.two-col,.three-col{grid-template-columns:1fr;}.nav-btn{padding:7px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="slide-area"><div class="slide" id="slide"></div></div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="prev-btn" onclick="goPrev()">← Previous</button>
+    <div class="nav-center">
+      <div class="dot-row" id="dots"></div>
+      <div class="sctr" id="sctr">1 / 1</div>
+      <div class="kbhint">← → Space · 🏆 Competition on last slide</div>
+    </div>
+    <button class="nav-btn primary" id="next-btn" onclick="goNext()">Next →</button>
+  </div>
+</div>
+<script>
+const LESSON_ID = `y8t6`;
+const SLIDES = [
+  { type:`intro`, title:`Data Representation: Images, Sound & Compression`, body:`
+<p>Computers store <strong>everything</strong> as binary — including images, audio and video. Understanding how this works helps you understand file sizes, quality and compression.</p>
+<div class="callout">🎯 This lesson: how images are stored as pixels, colour depth and resolution, how sound is sampled, and how compression reduces file sizes.</div>
+<div class="three-col">
+  <div class="card"><h4>Images</h4><p>Stored as a grid of pixels. Each pixel has a colour value stored as binary.</p></div>
+  <div class="card"><h4>Sound</h4><p>Stored by sampling the sound wave at regular intervals and converting to binary.</p></div>
+  <div class="card"><h4>Compression</h4><p>Reduces file size — either by removing data (lossy) or encoding data more efficiently (lossless).</p></div>
+</div>` },
+
+  { type:`concept`, title:`How Images Are Stored — Pixels & Colour Depth`, body:`
+<p>A digital image is a grid of <strong>pixels</strong> (picture elements). Each pixel stores a colour value as binary.</p>
+<div class="two-col">
+  <div class="card"><h4>Colour depth</h4><p>The number of <strong>bits per pixel</strong>. More bits = more possible colours:</p><ul>
+    <li><strong>1-bit</strong> = 2 colours (black/white)</li>
+    <li><strong>8-bit</strong> = 256 colours</li>
+    <li><strong>24-bit</strong> = 16.7 million colours (true colour)</li>
+  </ul></div>
+  <div class="card"><h4>Resolution</h4><p>The number of pixels in the image (width × height). Higher resolution = more detail = larger file size.</p><ul>
+    <li>A 4×4 pixel image = 16 pixels</li>
+    <li>A 1920×1080 image = ~2 million pixels</li>
+  </ul></div>
+</div>
+<div class="callout">📐 <strong>File size formula:</strong> Width (px) × Height (px) × Colour depth (bits) ÷ 8 = bytes</div>` },
+
+  { type:`concept`, title:`Calculating Image File Size`, body:`
+<p>You can calculate an uncompressed image's file size using the formula:</p>
+<pre>File size (bits) = Width × Height × Colour depth
+File size (bytes) = File size (bits) ÷ 8</pre>
+<p><strong>Example:</strong> A 100×100 pixel image with 24-bit colour depth:</p>
+<pre>100 × 100 × 24 = 240,000 bits
+240,000 ÷ 8 = 30,000 bytes = ~29.3 KB</pre>
+<div class="two-col">
+  <div class="card"><h4>What increases file size?</h4><ul>
+    <li>Higher resolution (more pixels)</li>
+    <li>Greater colour depth (more bits per pixel)</li>
+  </ul></div>
+  <div class="card"><h4>Try this</h4><p>A 200×150 image, 8-bit colour:<br><code>200 × 150 × 8 = 240,000 bits</code><br><code>240,000 ÷ 8 = 30,000 bytes</code></p></div>
+</div>
+<div class="callout warn">⚠️ This formula gives <strong>uncompressed</strong> file size. Real files use compression to reduce this significantly.</div>` },
+
+  { type:`concept`, title:`How Sound Is Stored — Sampling`, body:`
+<p>Sound is an analogue wave. To store it digitally, we <strong>sample</strong> the wave — measure its amplitude at regular intervals and convert each measurement to binary.</p>
+<div class="two-col">
+  <div class="card"><h4>Sample rate</h4><p>How many samples are taken <strong>per second</strong> (Hz).<br>Higher sample rate = better quality, larger file.</p><ul>
+    <li>CD quality = 44,100 Hz (44.1 kHz)</li>
+    <li>Phone call ≈ 8,000 Hz</li>
+  </ul></div>
+  <div class="card"><h4>Bit depth (sample resolution)</h4><p>The number of <strong>bits per sample</strong>. More bits = more accurate amplitude values = better quality.</p><ul>
+    <li>CD quality = 16-bit</li>
+    <li>Studio audio = 24-bit</li>
+  </ul></div>
+</div>
+<div class="callout">🎵 <strong>Sound file size (bits)</strong> = Sample rate × Bit depth × Duration (seconds) × Channels</div>` },
+
+  { type:`concept`, title:`Compression — Lossy vs Lossless`, body:`
+<p>Compression reduces file size. There are two types:</p>
+<div class="two-col">
+  <div class="card"><h4>Lossy compression</h4><p>Permanently <strong>removes</strong> some data — usually data humans can barely notice. The original cannot be restored.</p><ul>
+    <li>Used for: JPEG images, MP3 audio, MP4 video</li>
+    <li>Smaller files, but some quality loss</li>
+    <li>Good for streaming and web images</li>
+  </ul></div>
+  <div class="card"><h4>Lossless compression</h4><p>Encodes data more efficiently — <strong>no data is lost</strong>. The original file can be perfectly restored.</p><ul>
+    <li>Used for: PNG images, FLAC audio, ZIP files</li>
+    <li>Larger than lossy, but no quality loss</li>
+    <li>Good for documents, software, medical images</li>
+  </ul></div>
+</div>
+<div class="callout warn">⚠️ Each time you save a JPEG (lossy), quality is lost a little more. Always keep a lossless original!</div>` },
+
+  { type:`concept`, title:`Run-Length Encoding (RLE)`, body:`
+<p><strong>Run-Length Encoding</strong> is a simple lossless compression technique. Instead of storing repeated values individually, it stores the value and how many times it repeats.</p>
+<div class="callout">📦 Example — a row of pixels:<br>
+<code>WWWWWBBBWWW</code> → stored as <code>5W 3B 3W</code><br>
+Original: 11 values stored. Compressed: 6 values stored. Much smaller!</div>
+<div class="two-col">
+  <div class="card"><h4>When RLE works well</h4><ul>
+    <li>Images with large areas of the same colour</li>
+    <li>Simple diagrams, logos, icons</li>
+    <li>Fax transmissions</li>
+  </ul></div>
+  <div class="card"><h4>When RLE works poorly</h4><ul>
+    <li>Photographs with many different colours</li>
+    <li>High-detail images</li>
+    <li>Can even make files <em>larger</em> if every pixel is different</li>
+  </ul></div>
+</div>` },
+
+  { type:`activity`, title:`Guided Tasks — Images, Sound & Compression`, body:`
+<div class="task-box"><h4>📝 Task A — Core Questions</h4>
+<div class="answer-row">
+  <label>1. What is a pixel?</label>
+  <input class="ans-input" id="r1" placeholder="...">
+  <button class="check-btn" data-inp="r1" data-fb="fr1" data-ans="a single point of colour|smallest unit of an image|picture element|a dot of colour in an image|single point in an image">Check</button>
+  <span class="fb" id="fr1"></span>
+</div>
+<div class="answer-row">
+  <label>2. What does colour depth measure?</label>
+  <input class="ans-input" id="r2" placeholder="...">
+  <button class="check-btn" data-inp="r2" data-fb="fr2" data-ans="bits per pixel|number of bits per pixel|how many bits store each pixel|bits used per pixel">Check</button>
+  <span class="fb" id="fr2"></span>
+</div>
+<div class="answer-row">
+  <label>3. How many colours can 8-bit colour depth represent?</label>
+  <input class="ans-input" id="r3" placeholder="...">
+  <button class="check-btn" data-inp="r3" data-fb="fr3" data-ans="256">Check</button>
+  <span class="fb" id="fr3"></span>
+</div>
+<div class="answer-row">
+  <label>4. What is sampling in the context of audio?</label>
+  <input class="ans-input" id="r4" placeholder="...">
+  <button class="check-btn" data-inp="r4" data-fb="fr4" data-ans="measuring the sound wave at regular intervals|recording amplitude at regular intervals|taking measurements of a sound wave|converting analogue sound to digital">Check</button>
+  <span class="fb" id="fr4"></span>
+</div>
+<div class="answer-row">
+  <label>5. What type of compression permanently removes data?</label>
+  <input class="ans-input" id="r5" placeholder="...">
+  <button class="check-btn" data-inp="r5" data-fb="fr5" data-ans="lossy|lossy compression">Check</button>
+  <span class="fb" id="fr5"></span>
+</div>
+</div>
+<div class="task-box"><h4>📝 Task B — Calculations & Challenge</h4>
+<div class="answer-row">
+  <label>6. Calculate the uncompressed size in bits of a 10×10 pixel, 8-bit image.</label>
+  <input class="ans-input" id="r6" placeholder="bits">
+  <button class="check-btn" data-inp="r6" data-fb="fr6" data-ans="800|800 bits">Check</button>
+  <span class="fb" id="fr6"></span>
+</div>
+<div class="answer-row">
+  <label>7. Name one lossless file format for images.</label>
+  <input class="ans-input" id="r7" placeholder="...">
+  <button class="check-btn" data-inp="r7" data-fb="fr7" data-ans="png|PNG|gif|GIF|bmp|BMP|tiff|TIFF">Check</button>
+  <span class="fb" id="fr7"></span>
+</div>
+<div class="answer-row">
+  <label>8. What does RLE stand for?</label>
+  <input class="ans-input" id="r8" placeholder="...">
+  <button class="check-btn" data-inp="r8" data-fb="fr8" data-ans="run length encoding|run-length encoding|Run Length Encoding|Run-Length Encoding">Check</button>
+  <span class="fb" id="fr8"></span>
+</div>
+</div>` },
+
+  { type:`summary`, title:`Topic Summary`, body:`
+<ul>
+  <li>Images are stored as a grid of <strong>pixels</strong> — each pixel's colour is stored in binary</li>
+  <li><strong>Colour depth</strong> = bits per pixel. 24-bit = 16.7 million colours (true colour)</li>
+  <li><strong>File size</strong> = Width × Height × Colour depth (bits) ÷ 8 = bytes</li>
+  <li>Sound is stored by <strong>sampling</strong> — measuring amplitude at regular intervals</li>
+  <li>Higher <strong>sample rate</strong> and greater <strong>bit depth</strong> = better quality but larger file</li>
+  <li><strong>Lossy compression</strong> (JPEG, MP3) — removes data permanently, smaller files</li>
+  <li><strong>Lossless compression</strong> (PNG, FLAC) — no data lost, original can be restored</li>
+  <li><strong>RLE</strong> is a simple lossless technique that stores repeated values as count + value</li>
+</ul>
+<div class="callout success">✅ Excellent work completing Year 8 Computer Science! You now understand how all digital media is stored and compressed.</div>` },
+
+  { type:`compete`, title:`🏆 Representation Speed Challenge`, body:`
+<div class="compete-board">
+  <h4>🏆 Images, Sound & Compression Speed Challenge</h4>
+  <div id="comp-start-area">
+    <p style="font-size:14px;color:var(--muted);margin-bottom:12px">15 seconds per question. Faster = more points!</p>
+    <input class="compete-input" id="comp-name" placeholder="Your name...">
+    <button class="compete-btn" onclick="startComp()">🚀 Start!</button>
+    <div style="margin-top:12px"><ul class="leaderboard" id="leaderboard"></ul></div>
+  </div>
+  <div id="comp-game-area" style="display:none">
+    <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">
+      <span id="comp-qnum"></span><span id="comp-timeleft" style="color:var(--warning)"></span>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="comp-timer-fill"></div></div>
+    <div class="compete-q" id="comp-q"></div>
+    <input class="compete-input" id="comp-ans" placeholder="Answer..." autocomplete="off">
+    <button class="compete-btn" onclick="submitCompAns()">Submit ↵</button>
+    <div style="display:flex;justify-content:space-between;margin-top:8px">
+      <span style="font-size:13px;color:var(--muted)">Score: <strong style="color:var(--warning);font-family:var(--mono)" id="comp-score">0</strong></span>
+      <span id="comp-feedback" style="font-size:13px;font-weight:700"></span>
+    </div>
+  </div>
+  <div id="comp-end-area" style="display:none;text-align:center">
+    <div style="font-size:40px;margin-bottom:8px">🎉</div>
+    <p style="font-size:18px;font-weight:700">Well done, <span id="comp-final-name"></span>!</p>
+    <div class="score-display" id="comp-final-score">0</div>
+    <button class="compete-btn" onclick="resetComp()">🔄 Play Again</button>
+    <ul class="leaderboard" id="comp-lb-end"></ul>
+  </div>
+</div>` }
+];
+
+const COMP_Qs = [
+  { q:`What is a pixel?`, answers:[`picture element`,`single point of colour`,`a dot in an image`] },
+  { q:`What does colour depth measure?`, answers:[`bits per pixel`,`number of bits per pixel`] },
+  { q:`How many colours does 8-bit colour depth give?`, answers:[`256`] },
+  { q:`What type of compression permanently removes data?`, answers:[`lossy`,`lossy compression`] },
+  { q:`What type of compression allows the original to be restored?`, answers:[`lossless`,`lossless compression`] },
+  { q:`Name a lossy image format.`, answers:[`jpeg`,`JPEG`,`jpg`,`JPG`] },
+  { q:`Name a lossless image format.`, answers:[`png`,`PNG`,`gif`,`GIF`] },
+  { q:`What does RLE stand for?`, answers:[`run length encoding`,`run-length encoding`] },
+  { q:`What is the sample rate of CD quality audio?`, answers:[`44100`,`44.1 khz`,`44100 hz`,`44.1kHz`] },
+  { q:`File size formula: Width × Height × ??? ÷ 8 = bytes`, answers:[`colour depth`,`color depth`,`bit depth`] },
+  { q:`What increases when you raise the sample rate?`, answers:[`quality`,`file size`,`quality and file size`,`both`] },
+  { q:`In RLE, WWWWWBB would be stored as?`, answers:[`5w 2b`,`5W 2B`,`5 white 2 black`] },
+];
+
+// ── RENDER ──────────────────────────────────────────────────
+let cur = 0;
+
+function attachCheckListeners() {
+  document.querySelectorAll('.check-btn[data-inp]').forEach(function(btn) {
+    btn._checkHandler && btn.removeEventListener('click', btn._checkHandler);
+    btn._checkHandler = function() {
+      var inputId = this.getAttribute('data-inp');
+      var fbId    = this.getAttribute('data-fb');
+      var answers = this.getAttribute('data-ans').split('|');
+      schkAny(inputId, fbId, answers);
+    };
+    btn.addEventListener('click', btn._checkHandler);
+  });
+}
+
+function render() {
+  const s = SLIDES[cur], total = SLIDES.length;
+  const typeLabel = s.type === 'compete' ? 'Competition' : s.type.charAt(0).toUpperCase() + s.type.slice(1);
+  document.getElementById('slide').innerHTML =
+    '<div class="eyebrow">' +
+    '<span class="stype t-' + s.type + '">' + typeLabel + '</span>' +
+    '<span class="snum">Slide ' + (cur+1) + ' of ' + total + '</span>' +
+    '</div>' +
+    '<h1>' + s.title + '</h1>' +
+    '<div class="sb">' + (s.body || '') + '</div>';
+  document.getElementById('prog').style.width = ((cur+1)/total*100) + '%';
+  document.getElementById('sctr').textContent  = (cur+1) + ' / ' + total;
+  document.getElementById('prev-btn').disabled  = cur === 0;
+  document.getElementById('next-btn').disabled  = cur === total - 1;
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  SLIDES.forEach((sl, i) => {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (sl.type==='compete' ? ' compete-dot' : '') + (i===cur ? ' active' : i<cur ? ' done' : '');
+    d.onclick = () => { cur=i; render(); };
+    d.title = sl.title;
+    dots.appendChild(d);
+  });
+  if (s.type === 'compete') {
+    const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+    const el = document.getElementById('leaderboard');
+    if (el) renderLeaderboard(el, lb);
+  }
+  attachCheckListeners();
+}
+
+function goNext() { if(cur<SLIDES.length-1){cur++;render();} }
+function goPrev() { if(cur>0){cur--;render();} }
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goNext();}
+  if(e.key==='ArrowLeft'){e.preventDefault();goPrev();}
+});
+
+function schkAny(inputId, fbId, answers) {
+  const clean = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const val = clean(document.getElementById(inputId).value.trim());
+  const ok  = answers.map(a => clean(a)).includes(val);
+  const fb  = document.getElementById(fbId);
+  fb.className   = 'fb ' + (ok ? 'ok' : 'no');
+  fb.textContent = ok ? '✓ Correct!' : '✗ Try again — answer: ' + answers[0];
+}
+
+// ── SPEED CHALLENGE ──────────────────────────────────────────
+let compQs = [], compIdx = 0, compScore = 0, compName = '', compTimer = null, compRunning = false;
+
+function startComp() {
+  compName = document.getElementById('comp-name').value.trim() || 'Anonymous';
+  compScore = 0; compIdx = 0; compRunning = true;
+  compQs = [...COMP_Qs].sort(() => Math.random()-0.5);
+  document.getElementById('comp-start-area').style.display = 'none';
+  document.getElementById('comp-game-area').style.display  = 'block';
+  nextCompQ();
+}
+
+function nextCompQ() {
+  if (compIdx >= compQs.length) { endComp(); return; }
+  const q = compQs[compIdx];
+  document.getElementById('comp-q').textContent       = q.q;
+  document.getElementById('comp-qnum').textContent    = 'Q' + (compIdx+1) + ' / ' + compQs.length;
+  document.getElementById('comp-ans').value           = '';
+  document.getElementById('comp-feedback').textContent = '';
+  document.getElementById('comp-ans').focus();
+  let t = 15;
+  const fill = document.getElementById('comp-timer-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
+  setTimeout(() => { fill.style.transition='width 1s linear'; fill.style.width='0%'; }, 50);
+  clearInterval(compTimer);
+  compTimer = setInterval(() => {
+    t--;
+    document.getElementById('comp-timeleft').textContent = t + 's';
+    if (t <= 0) { clearInterval(compTimer); autoNextComp(); }
+  }, 1000);
+}
+
+function autoNextComp() {
+  if (!compRunning) return;
+  const fb = document.getElementById('comp-feedback');
+  fb.textContent = '⏱ Time! Ans: ' + compQs[compIdx].answers[0];
+  fb.style.color = 'var(--danger)';
+  compIdx++;
+  setTimeout(nextCompQ, 1300);
+}
+
+function submitCompAns() {
+  if (!compRunning) return;
+  clearInterval(compTimer);
+  const clean = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const ans = clean(document.getElementById('comp-ans').value.trim());
+  const q   = compQs[compIdx];
+  const ok  = q.answers.map(a => clean(a)).includes(ans);
+  const pct = parseFloat(document.getElementById('comp-timer-fill').style.width) || 0;
+  const pts = ok ? Math.ceil(pct/10) + 10 : 0;
+  const fb  = document.getElementById('comp-feedback');
+  if (ok) {
+    compScore += pts;
+    document.getElementById('comp-score').textContent = compScore;
+    fb.textContent = '✓ +' + pts + ' pts!';
+    fb.style.color = 'var(--success)';
+  } else {
+    fb.textContent = '✗ Ans: ' + q.answers[0];
+    fb.style.color = 'var(--danger)';
+  }
+  compIdx++;
+  setTimeout(nextCompQ, 1000);
+}
+
+document.addEventListener('keydown', e => {
+  const el = document.getElementById('comp-ans');
+  if (e.key==='Enter' && compRunning && el && document.activeElement===el) submitCompAns();
+});
+
+function endComp() {
+  compRunning = false;
+  document.getElementById('comp-game-area').style.display = 'none';
+  document.getElementById('comp-end-area').style.display  = 'block';
+  document.getElementById('comp-final-name').textContent  = compName;
+  document.getElementById('comp-final-score').textContent = compScore;
+  const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+  lb.push({ name: compName, score: compScore, ts: Date.now() });
+  lb.sort((a,b) => b.score - a.score);
+  localStorage.setItem('ks3_lb_' + LESSON_ID, JSON.stringify(lb.slice(0,10)));
+  const el = document.getElementById('comp-lb-end');
+  if (el) renderLeaderboard(el, lb);
+}
+
+function resetComp() {
+  document.getElementById('comp-end-area').style.display   = 'none';
+  document.getElementById('comp-start-area').style.display = 'block';
+  const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+  const el = document.getElementById('leaderboard');
+  if (el) renderLeaderboard(el, lb);
+}
+
+function renderLeaderboard(el, lb) {
+  el.innerHTML = lb.slice(0,10).map((e,i) =>
+    '<li><span class="lb-pos">' + (i+1) + '</span>' +
+    '<span class="lb-name">' + e.name + '</span>' +
+    '<span class="lb-score">' + e.score + ' pts</span></li>'
+  ).join('');
+}
+
+render();
+</script>
+</body>
+</html>

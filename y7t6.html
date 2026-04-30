@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y7 — Digital Literacy, E-Safety & the Law</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{--bg:#0f1117;--surface:#1a1d2e;--surface2:#22263a;--border:#353a5c;--accent:#00f0ff;--text:#f0f0ff;--muted:#9090c0;--success:#2ecc71;--warning:#f1c40f;--danger:#e74c3c;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;}
+.presentation{display:flex;flex-direction:column;height:100vh;}
+.progress-bar{height:3px;background:var(--border);flex-shrink:0;}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.5s ease;}
+.slide-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;}
+.slide{width:100%;max-width:920px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 56px;position:relative;overflow-y:auto;max-height:calc(100vh - 130px);animation:sIn 0.3s ease;}
+@keyframes sIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+.slide::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent);}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.stype{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:3px 10px;border-radius:5px;display:inline-block;}
+.t-intro{background:rgba(0,240,255,.12);color:#00f0ff;border:1px solid rgba(0,240,255,.3);}
+.t-concept{background:rgba(191,95,255,.12);color:#bf5fff;border:1px solid rgba(191,95,255,.3);}
+.t-activity{background:rgba(255,122,32,.12);color:#ff7a20;border:1px solid rgba(255,122,32,.3);}
+.t-summary{background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3);}
+.t-compete,.t-Competition{background:rgba(241,196,15,.12);color:#f1c40f;border:1px solid rgba(241,196,15,.3);}
+.snum{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.slide h1{font-size:clamp(20px,3.5vw,34px);font-weight:700;line-height:1.15;margin-bottom:18px;}
+.sb{color:var(--muted);font-size:15px;line-height:1.8;}
+.sb ul,.sb ol{padding-left:22px;}
+.sb li{margin-bottom:7px;}
+.sb li::marker{color:var(--accent);}
+.sb strong{color:var(--text);}
+.sb p{margin-bottom:12px;}
+.sb p:last-child{margin-bottom:0;}
+code{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:5px;font-size:13px;color:var(--accent);}
+.callout{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--text);}
+.callout.warn{border-left-color:var(--warning);background:rgba(241,196,15,.08);}
+.callout.success{border-left-color:var(--success);background:rgba(46,204,113,.08);}
+.callout.danger{border-left-color:var(--danger);background:rgba(231,76,60,.08);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0;}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;}
+.bit-table{width:100%;border-collapse:collapse;margin:14px 0;font-family:var(--mono);}
+.bit-table th{background:var(--surface2);padding:10px 14px;border:1px solid var(--border);text-align:center;font-size:13px;color:var(--accent);}
+.bit-table td{padding:10px 14px;border:1px solid var(--border);font-size:13px;}
+.bit-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.task-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0;}
+.task-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text);}
+.answer-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.answer-row label{font-size:13px;color:var(--muted);min-width:260px;flex:1 1 260px;line-height:1.5;}
+.ans-input{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:14px;width:clamp(140px,30vw,320px);text-align:left;transition:border-color .2s;}
+.ans-input:focus{outline:none;border-color:var(--accent);}
+.check-btn{padding:6px 14px;border-radius:7px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:all .2s;}
+.check-btn:hover{background:var(--accent);color:#000;}
+.fb{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;display:none;}
+.fb.ok{background:rgba(46,204,113,.15);color:var(--success);border:1px solid var(--success);display:inline-block;}
+.fb.no{background:rgba(231,76,60,.15);color:var(--danger);border:1px solid var(--danger);display:inline-block;}
+.compete-board{background:var(--surface2);border:2px solid var(--warning);border-radius:14px;padding:20px;margin:14px 0;}
+.score-display{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--warning);text-align:center;margin:10px 0;}
+.timer-bar{height:8px;background:var(--border);border-radius:4px;margin:8px 0;overflow:hidden;}
+.timer-fill{height:100%;background:var(--warning);border-radius:4px;transition:width 1s linear;}
+.compete-input{background:var(--bg);border:2px solid var(--warning);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--mono);font-size:18px;width:100%;text-align:center;margin:10px 0;}
+.compete-input:focus{outline:none;}
+.compete-btn{padding:10px 28px;border-radius:8px;border:none;background:var(--warning);color:#000;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--sans);width:100%;margin-top:6px;}
+.compete-q{font-size:17px;font-weight:700;text-align:center;padding:14px;color:var(--text);min-height:52px;}
+.leaderboard{list-style:none;margin-top:10px;}
+.leaderboard li{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;font-size:13px;margin-bottom:4px;background:rgba(241,196,15,.06);border:1px solid rgba(241,196,15,.15);}
+.lb-pos{font-family:var(--mono);font-size:12px;color:var(--warning);width:24px;}
+.lb-name{flex:1;font-weight:600;}
+.lb-score{font-family:var(--mono);font-size:13px;color:var(--warning);}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);}
+.nav-btn{padding:8px 22px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);transition:all .2s;font-family:var(--sans);}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.nav-btn.primary{background:var(--accent);color:#000;border-color:var(--accent);}
+.nav-center{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.dot-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:300px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.pdot.active{background:var(--accent);transform:scale(1.4);}
+.pdot.done{background:var(--muted);}
+.pdot.compete-dot{background:rgba(241,196,15,.4);}
+.pdot.compete-dot.active{background:var(--warning);}
+.sctr{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.kbhint{font-size:11px;color:var(--muted);}
+body.nature-green{--bg:#f4f1e8;--surface:#fff;--surface2:#ebe6d5;--border:#a8956a;--accent:#3a7a3a;--text:#1c1a0e;--muted:#5c5430;}
+body.superpower *{font-family:'OpenDyslexic','Comic Sans MS',cursive!important;letter-spacing:.06em;word-spacing:.18em;line-height:1.9!important;}
+body.superpower{--bg:#fffbea;--surface:#fff;--surface2:#f5f0dc;--border:#c8b97a;--text:#1a1200;--muted:#5a4e20;--accent:#1a6fd4;}
+@media(max-width:640px){.slide{padding:24px 18px;}.two-col,.three-col{grid-template-columns:1fr;}.nav-btn{padding:7px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="slide-area"><div class="slide" id="slide"></div></div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="prev-btn" onclick="goPrev()">← Previous</button>
+    <div class="nav-center">
+      <div class="dot-row" id="dots"></div>
+      <div class="sctr" id="sctr">1 / 1</div>
+      <div class="kbhint">← → Space · 🏆 Competition on last slide</div>
+    </div>
+    <button class="nav-btn primary" id="next-btn" onclick="goNext()">Next →</button>
+  </div>
+</div>
+<script>
+const LESSON_ID = `y7t6`;
+const SLIDES = [
+  { type:`intro`, title:`Digital Literacy, E-Safety & the Law`, body:`
+<p>Being a responsible digital citizen means understanding how to stay safe online, how to behave ethically, and what the law says about using technology.</p>
+<div class="callout">🎯 In this lesson: online safety, personal information, cyberbullying, copyright, the Computer Misuse Act, and the Data Protection Act.</div>
+<div class="three-col">
+  <div class="card"><h4>E-Safety</h4><p>Staying safe from dangers online — protecting personal data, avoiding scams, and managing your digital footprint.</p></div>
+  <div class="card"><h4>Ethics</h4><p>Behaving responsibly and respectfully online — treating others well, giving credit for others' work.</p></div>
+  <div class="card"><h4>The Law</h4><p>Acts of Parliament that govern how computers, data, and online content must be treated.</p></div>
+</div>` },
+
+  { type:`concept`, title:`Personal Information & Privacy`, body:`
+<p>Your <strong>personal information</strong> is data that can identify you. Sharing it online carries real risks.</p>
+<div class="two-col">
+  <div class="card"><h4>What counts as personal info?</h4><ul>
+    <li>Full name and date of birth</li>
+    <li>Home address and phone number</li>
+    <li>School name and email address</li>
+    <li>Photos of you or your location</li>
+    <li>Passwords and account details</li>
+  </ul></div>
+  <div class="card"><h4>Why protect it?</h4><ul>
+    <li>Strangers can use it to locate or contact you</li>
+    <li>Can be used in identity theft or scams</li>
+    <li>Once shared online, very hard to remove</li>
+    <li>Your <strong>digital footprint</strong> lasts forever</li>
+  </ul></div>
+</div>
+<div class="callout warn">⚠️ Your <strong>digital footprint</strong> is the trail of data you leave online — posts, searches, purchases. Future employers and universities can see it!</div>` },
+
+  { type:`concept`, title:`Cyberbullying & Online Behaviour`, body:`
+<p><strong>Cyberbullying</strong> is using technology to bully, harass or intimidate someone. It is a serious issue and can have lasting harm.</p>
+<div class="two-col">
+  <div class="card"><h4>Forms of cyberbullying</h4><ul>
+    <li>Sending threatening or nasty messages</li>
+    <li>Posting embarrassing photos without consent</li>
+    <li>Excluding someone deliberately online</li>
+    <li>Creating fake profiles to impersonate someone</li>
+    <li>Spreading rumours on social media</li>
+  </ul></div>
+  <div class="card"><h4>What to do</h4><ul>
+    <li><strong>Don't reply</strong> — it often makes things worse</li>
+    <li><strong>Save evidence</strong> — screenshot messages</li>
+    <li><strong>Block</strong> the person</li>
+    <li><strong>Tell</strong> a trusted adult or teacher</li>
+    <li><strong>Report</strong> to the platform</li>
+  </ul></div>
+</div>
+<div class="callout danger">🚨 Cyberbullying can be a criminal offence under the Malicious Communications Act and the Communications Act 2003.</div>` },
+
+  { type:`concept`, title:`Copyright & Intellectual Property`, body:`
+<p><strong>Copyright</strong> is a law that protects creators — authors, artists, musicians and developers — giving them control over how their work is used.</p>
+<div class="two-col">
+  <div class="card"><h4>What does copyright protect?</h4><ul>
+    <li>Written work — books, articles, lyrics</li>
+    <li>Music and recordings</li>
+    <li>Images, photographs and artwork</li>
+    <li>Software and code</li>
+    <li>Films and videos</li>
+  </ul></div>
+  <div class="card"><h4>What you cannot do without permission</h4><ul>
+    <li>Copy and redistribute someone's work</li>
+    <li>Download music or films illegally (piracy)</li>
+    <li>Use images from the internet in your own work</li>
+    <li>Pretend someone else's work is yours (plagiarism)</li>
+  </ul></div>
+</div>
+<div class="callout">💡 <strong>Creative Commons</strong> licences let creators share work with conditions — some allow free use as long as you credit the author.</div>` },
+
+  { type:`concept`, title:`The Computer Misuse Act 1990`, body:`
+<p>The <strong>Computer Misuse Act 1990</strong> makes it illegal to access or modify computer systems without permission. It has three main offences:</p>
+<table class="bit-table">
+  <tr><th>Offence</th><th>Example</th><th>Max Sentence</th></tr>
+  <tr><td><strong>Unauthorised access</strong></td><td>Guessing someone's password to log into their account</td><td>2 years</td></tr>
+  <tr><td><strong>Unauthorised access to commit a further crime</strong></td><td>Hacking a bank account to steal money</td><td>5 years</td></tr>
+  <tr><td><strong>Unauthorised modification</strong></td><td>Installing malware, deleting or changing files</td><td>10 years</td></tr>
+</table>
+<div class="callout warn">⚠️ Even accessing your friend's account without permission — even if they gave you the password — could be illegal under this Act.</div>` },
+
+  { type:`concept`, title:`The Data Protection Act 2018 & GDPR`, body:`
+<p>The <strong>Data Protection Act 2018</strong> (incorporating GDPR) controls how organisations collect, store and use personal data.</p>
+<div class="two-col">
+  <div class="card"><h4>Key principles</h4><ul>
+    <li>Data must be collected <strong>lawfully and fairly</strong></li>
+    <li>Only collect what is <strong>necessary</strong></li>
+    <li>Data must be <strong>accurate</strong> and kept up to date</li>
+    <li>Not kept longer than <strong>necessary</strong></li>
+    <li>Stored <strong>securely</strong></li>
+    <li>Not transferred outside the UK without protection</li>
+  </ul></div>
+  <div class="card"><h4>Your rights</h4><ul>
+    <li>Right to <strong>access</strong> your data</li>
+    <li>Right to have data <strong>corrected</strong></li>
+    <li>Right to have data <strong>deleted</strong> (right to be forgotten)</li>
+    <li>Right to <strong>object</strong> to data being used</li>
+    <li>Right to <strong>data portability</strong></li>
+  </ul></div>
+</div>
+<div class="callout">💡 <strong>GDPR</strong> = General Data Protection Regulation. It applies across the UK and EU and carries fines of up to €20 million or 4% of global turnover for breaches.</div>` },
+
+  { type:`activity`, title:`Guided Tasks — Digital Literacy & the Law`, body:`
+<div class="task-box"><h4>📝 Task A — E-Safety & Online Behaviour</h4>
+<div class="answer-row">
+  <label>1. What is a digital footprint?</label>
+  <input class="ans-input" id="dl1" placeholder="...">
+  <button class="check-btn" data-inp="dl1" data-fb="fdl1" data-ans="trail of data left online|data trail|the trail of data you leave online|online data trail|traces of activity online">Check</button>
+  <span class="fb" id="fdl1"></span>
+</div>
+<div class="answer-row">
+  <label>2. What should you do first if you are being cyberbullied?</label>
+  <input class="ans-input" id="dl2" placeholder="...">
+  <button class="check-btn" data-inp="dl2" data-fb="fdl2" data-ans="tell a trusted adult|tell an adult|tell a teacher|report it|block them|save evidence|dont reply|do not reply">Check</button>
+  <span class="fb" id="fdl2"></span>
+</div>
+<div class="answer-row">
+  <label>3. What does copyright protect?</label>
+  <input class="ans-input" id="dl3" placeholder="...">
+  <button class="check-btn" data-inp="dl3" data-fb="fdl3" data-ans="creators work|original work|creative work|intellectual property|the creators right to their work|authors work">Check</button>
+  <span class="fb" id="fdl3"></span>
+</div>
+<div class="answer-row">
+  <label>4. What is plagiarism?</label>
+  <input class="ans-input" id="dl4" placeholder="...">
+  <button class="check-btn" data-inp="dl4" data-fb="fdl4" data-ans="claiming someone elses work as your own|using someone elses work without credit|copying without credit|presenting others work as your own">Check</button>
+  <span class="fb" id="fdl4"></span>
+</div>
+<div class="answer-row">
+  <label>5. Name the Act that makes hacking illegal in the UK.</label>
+  <input class="ans-input" id="dl5" placeholder="...">
+  <button class="check-btn" data-inp="dl5" data-fb="fdl5" data-ans="computer misuse act|computer misuse act 1990|cma|the computer misuse act">Check</button>
+  <span class="fb" id="fdl5"></span>
+</div>
+</div>
+<div class="task-box"><h4>📝 Task B — Challenge Questions</h4>
+<div class="answer-row">
+  <label>6. What does GDPR stand for?</label>
+  <input class="ans-input" id="dl6" placeholder="...">
+  <button class="check-btn" data-inp="dl6" data-fb="fdl6" data-ans="general data protection regulation|General Data Protection Regulation|gdpr">Check</button>
+  <span class="fb" id="fdl6"></span>
+</div>
+<div class="answer-row">
+  <label>7. Under the Computer Misuse Act, what is unauthorised modification?</label>
+  <input class="ans-input" id="dl7" placeholder="...">
+  <button class="check-btn" data-inp="dl7" data-fb="fdl7" data-ans="changing or deleting data without permission|installing malware|modifying files without permission|deleting or changing computer data">Check</button>
+  <span class="fb" id="fdl7"></span>
+</div>
+<div class="answer-row">
+  <label>8. Name one right you have under the Data Protection Act.</label>
+  <input class="ans-input" id="dl8" placeholder="...">
+  <button class="check-btn" data-inp="dl8" data-fb="fdl8" data-ans="access your data|right to access|correct your data|have data deleted|right to be forgotten|object to data use|data portability|right to erasure">Check</button>
+  <span class="fb" id="fdl8"></span>
+</div>
+</div>` },
+
+  { type:`summary`, title:`Topic Summary`, body:`
+<ul>
+  <li>Your <strong>digital footprint</strong> is permanent — think before you post</li>
+  <li><strong>Personal information</strong> includes your name, address, school, photos and passwords — keep them private</li>
+  <li><strong>Cyberbullying</strong> is harmful and can be illegal — tell an adult, save evidence, report it</li>
+  <li><strong>Copyright</strong> protects creators — you cannot use their work without permission</li>
+  <li>The <strong>Computer Misuse Act 1990</strong> makes unauthorised computer access and modification a criminal offence</li>
+  <li>The <strong>Data Protection Act 2018</strong> / GDPR controls how organisations handle personal data and gives you rights over your own data</li>
+</ul>
+<div class="callout success">✅ You are now equipped to stay safe, act responsibly, and understand the law online. Well done completing Year 7 Computer Science!</div>` },
+
+  { type:`compete`, title:`🏆 Digital Literacy Speed Challenge`, body:`
+<div class="compete-board">
+  <h4>🏆 Digital Literacy Speed Challenge</h4>
+  <div id="comp-start-area">
+    <p style="font-size:14px;color:var(--muted);margin-bottom:12px">15 seconds per question. Faster = more points!</p>
+    <input class="compete-input" id="comp-name" placeholder="Your name...">
+    <button class="compete-btn" onclick="startComp()">🚀 Start!</button>
+    <div style="margin-top:12px"><ul class="leaderboard" id="leaderboard"></ul></div>
+  </div>
+  <div id="comp-game-area" style="display:none">
+    <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">
+      <span id="comp-qnum"></span><span id="comp-timeleft" style="color:var(--warning)"></span>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="comp-timer-fill"></div></div>
+    <div class="compete-q" id="comp-q"></div>
+    <input class="compete-input" id="comp-ans" placeholder="Answer..." autocomplete="off">
+    <button class="compete-btn" onclick="submitCompAns()">Submit ↵</button>
+    <div style="display:flex;justify-content:space-between;margin-top:8px">
+      <span style="font-size:13px;color:var(--muted)">Score: <strong style="color:var(--warning);font-family:var(--mono)" id="comp-score">0</strong></span>
+      <span id="comp-feedback" style="font-size:13px;font-weight:700"></span>
+    </div>
+  </div>
+  <div id="comp-end-area" style="display:none;text-align:center">
+    <div style="font-size:40px;margin-bottom:8px">🎉</div>
+    <p style="font-size:18px;font-weight:700">Well done, <span id="comp-final-name"></span>!</p>
+    <div class="score-display" id="comp-final-score">0</div>
+    <button class="compete-btn" onclick="resetComp()">🔄 Play Again</button>
+    <ul class="leaderboard" id="comp-lb-end"></ul>
+  </div>
+</div>` }
+];
+
+const COMP_Qs = [
+  { q:`What is a digital footprint?`, answers:[`trail of data`,`data trail`,`traces online`] },
+  { q:`Name the Act that makes hacking illegal in the UK.`, answers:[`Computer Misuse Act`,`computer misuse act`,`CMA`] },
+  { q:`What does GDPR stand for?`, answers:[`General Data Protection Regulation`,`general data protection regulation`] },
+  { q:`What does copyright protect?`, answers:[`original work`,`creators work`,`intellectual property`] },
+  { q:`What is cyberbullying?`, answers:[`bullying using technology`,`online bullying`,`using tech to bully`] },
+  { q:`What does the Data Protection Act give you the right to do with your data?`, answers:[`access it`,`delete it`,`correct it`,`be forgotten`] },
+  { q:`What is plagiarism?`, answers:[`claiming someone elses work`,`using others work without credit`,`copying without credit`] },
+  { q:`Name one personal piece of information you should not share online.`, answers:[`address`,`password`,`phone number`,`full name`,`home address`] },
+  { q:`What should you do if you are cyberbullied?`, answers:[`tell an adult`,`report it`,`tell a teacher`,`save evidence`] },
+  { q:`Unauthorised computer access is an offence under which Act?`, answers:[`Computer Misuse Act`,`computer misuse act`,`CMA`] },
+  { q:`What does HTTPS add to HTTP?`, answers:[`encryption`,`security`,`Encryption`] },
+  { q:`Can you use any image from the internet in your own work freely?`, answers:[`no`,`No`] },
+];
+
+// ── RENDER ──────────────────────────────────────────────────
+let cur = 0;
+
+function attachCheckListeners() {
+  document.querySelectorAll('.check-btn[data-inp]').forEach(function(btn) {
+    btn._checkHandler && btn.removeEventListener('click', btn._checkHandler);
+    btn._checkHandler = function() {
+      var inputId = this.getAttribute('data-inp');
+      var fbId    = this.getAttribute('data-fb');
+      var answers = this.getAttribute('data-ans').split('|');
+      schkAny(inputId, fbId, answers);
+    };
+    btn.addEventListener('click', btn._checkHandler);
+  });
+}
+
+function render() {
+  const s = SLIDES[cur], total = SLIDES.length;
+  const typeLabel = s.type === 'compete' ? 'Competition' : s.type.charAt(0).toUpperCase() + s.type.slice(1);
+  document.getElementById('slide').innerHTML =
+    '<div class="eyebrow">' +
+    '<span class="stype t-' + s.type + '">' + typeLabel + '</span>' +
+    '<span class="snum">Slide ' + (cur+1) + ' of ' + total + '</span>' +
+    '</div>' +
+    '<h1>' + s.title + '</h1>' +
+    '<div class="sb">' + (s.body || '') + '</div>';
+  document.getElementById('prog').style.width = ((cur+1)/total*100) + '%';
+  document.getElementById('sctr').textContent  = (cur+1) + ' / ' + total;
+  document.getElementById('prev-btn').disabled  = cur === 0;
+  document.getElementById('next-btn').disabled  = cur === total - 1;
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  SLIDES.forEach((sl, i) => {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (sl.type==='compete' ? ' compete-dot' : '') + (i===cur ? ' active' : i<cur ? ' done' : '');
+    d.onclick = () => { cur=i; render(); };
+    d.title = sl.title;
+    dots.appendChild(d);
+  });
+  if (s.type === 'compete') {
+    const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+    const el = document.getElementById('leaderboard');
+    if (el) renderLeaderboard(el, lb);
+  }
+  attachCheckListeners();
+}
+
+function goNext() { if(cur<SLIDES.length-1){cur++;render();} }
+function goPrev() { if(cur>0){cur--;render();} }
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goNext();}
+  if(e.key==='ArrowLeft'){e.preventDefault();goPrev();}
+});
+
+function schkAny(inputId, fbId, answers) {
+  const clean = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const val = clean(document.getElementById(inputId).value.trim());
+  const ok  = answers.map(a => clean(a)).includes(val);
+  const fb  = document.getElementById(fbId);
+  fb.className   = 'fb ' + (ok ? 'ok' : 'no');
+  fb.textContent = ok ? '✓ Correct!' : '✗ Try again — answer: ' + answers[0];
+}
+
+// ── SPEED CHALLENGE ──────────────────────────────────────────
+let compQs = [], compIdx = 0, compScore = 0, compName = '', compTimer = null, compRunning = false;
+
+function startComp() {
+  compName = document.getElementById('comp-name').value.trim() || 'Anonymous';
+  compScore = 0; compIdx = 0; compRunning = true;
+  compQs = [...COMP_Qs].sort(() => Math.random()-0.5);
+  document.getElementById('comp-start-area').style.display = 'none';
+  document.getElementById('comp-game-area').style.display  = 'block';
+  nextCompQ();
+}
+
+function nextCompQ() {
+  if (compIdx >= compQs.length) { endComp(); return; }
+  const q = compQs[compIdx];
+  document.getElementById('comp-q').textContent       = q.q;
+  document.getElementById('comp-qnum').textContent    = 'Q' + (compIdx+1) + ' / ' + compQs.length;
+  document.getElementById('comp-ans').value           = '';
+  document.getElementById('comp-feedback').textContent = '';
+  document.getElementById('comp-ans').focus();
+  let t = 15;
+  const fill = document.getElementById('comp-timer-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
+  setTimeout(() => { fill.style.transition='width 1s linear'; fill.style.width='0%'; }, 50);
+  clearInterval(compTimer);
+  compTimer = setInterval(() => {
+    t--;
+    document.getElementById('comp-timeleft').textContent = t + 's';
+    if (t <= 0) { clearInterval(compTimer); autoNextComp(); }
+  }, 1000);
+}
+
+function autoNextComp() {
+  if (!compRunning) return;
+  const fb = document.getElementById('comp-feedback');
+  fb.textContent = '⏱ Time! Ans: ' + compQs[compIdx].answers[0];
+  fb.style.color = 'var(--danger)';
+  compIdx++;
+  setTimeout(nextCompQ, 1300);
+}
+
+function submitCompAns() {
+  if (!compRunning) return;
+  clearInterval(compTimer);
+  const clean = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const ans = clean(document.getElementById('comp-ans').value.trim());
+  const q   = compQs[compIdx];
+  const ok  = q.answers.map(a => clean(a)).includes(ans);
+  const pct = parseFloat(document.getElementById('comp-timer-fill').style.width) || 0;
+  const pts = ok ? Math.ceil(pct/10) + 10 : 0;
+  const fb  = document.getElementById('comp-feedback');
+  if (ok) {
+    compScore += pts;
+    document.getElementById('comp-score').textContent = compScore;
+    fb.textContent = '✓ +' + pts + ' pts!';
+    fb.style.color = 'var(--success)';
+  } else {
+    fb.textContent = '✗ Ans: ' + q.answers[0];
+    fb.style.color = 'var(--danger)';
+  }
+  compIdx++;
+  setTimeout(nextCompQ, 1000);
+}
+
+document.addEventListener('keydown', e => {
+  const el = document.getElementById('comp-ans');
+  if (e.key==='Enter' && compRunning && el && document.activeElement===el) submitCompAns();
+});
+
+function endComp() {
+  compRunning = false;
+  document.getElementById('comp-game-area').style.display = 'none';
+  document.getElementById('comp-end-area').style.display  = 'block';
+  document.getElementById('comp-final-name').textContent  = compName;
+  document.getElementById('comp-final-score').textContent = compScore;
+  const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+  lb.push({ name: compName, score: compScore, ts: Date.now() });
+  lb.sort((a,b) => b.score - a.score);
+  localStorage.setItem('ks3_lb_' + LESSON_ID, JSON.stringify(lb.slice(0,10)));
+  const el = document.getElementById('comp-lb-end');
+  if (el) renderLeaderboard(el, lb);
+}
+
+function resetComp() {
+  document.getElementById('comp-end-area').style.display   = 'none';
+  document.getElementById('comp-start-area').style.display = 'block';
+  const lb = JSON.parse(localStorage.getItem('ks3_lb_' + LESSON_ID) || '[]');
+  const el = document.getElementById('leaderboard');
+  if (el) renderLeaderboard(el, lb);
+}
+
+function renderLeaderboard(el, lb) {
+  el.innerHTML = lb.slice(0,10).map((e,i) =>
+    '<li><span class="lb-pos">' + (i+1) + '</span>' +
+    '<span class="lb-name">' + e.name + '</span>' +
+    '<span class="lb-score">' + e.score + ' pts</span></li>'
+  ).join('');
+}
+
+render();
+</script>
+</body>
+</html>
