@@ -361,8 +361,12 @@ function showTab(tab) {
 //  RELEASE SYSTEM
 // ═══════════════════════════════════════════════════
 function getReleased() {
-  const s = localStorage.getItem('ks3_released');
-  return s ? JSON.parse(s) : {7:[0],8:[0],9:[0]};
+  // All lessons open by default — no localStorage dependency
+  return {
+    7: LESSONS[7].map((_,i) => i),
+    8: LESSONS[8].map((_,i) => i),
+    9: LESSONS[9].map((_,i) => i),
+  };
 }
 function setReleased(r) { localStorage.setItem('ks3_released', JSON.stringify(r)); }
 function isReleased(year, idx) { return (getReleased()[year]||[]).includes(idx); }
